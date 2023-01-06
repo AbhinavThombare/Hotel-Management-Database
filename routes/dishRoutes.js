@@ -28,16 +28,21 @@ router.get('/api/dish/alldisges',async(req,res) => {
 
 router.put('/api/dish/updatedish',async(req,res) => {
     const updatedish = Dish(req.body.dish)
-    console.log(updatedish._id)
     const dish = await Dish.findOneAndUpdate({_id:updatedish._id},{
         Category:updatedish.Category,
         Dish_Name:updatedish.Dish_Name,
         Price:updatedish.Price
     })
-    
-
-    console.log(dish)
+    if(!dish){
+        return res.status(400).send('Dish is not found')
+    }
     await dish.save()
+    return res.status(200).send()
+})
+
+router.delete('/api/dish/delete/:dishid',async(req,res) => {
+    const dishID = req.params.dishid
+    await Dish.findByIdAndDelete(dishID)
     return res.status(200).send()
 })
 
