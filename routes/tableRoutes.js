@@ -2,19 +2,31 @@ const express = require('express')
 const { restart } = require('nodemon')
 const router = express.Router()
 const Table = require('../models/table')
+const Dish = require('../models/dishes')
 
 router.post('/api/table/addtable', async (req, res) => {
     try {
-        const table = new Table(req.body.table)
-        const response = await Table.findOne({tableNo:table.tableNo})
+        const table = req.body.table
+        console.log(table)
 
-        if(response) {
-            return res.status(400).send('Table already Occupied!')
-        }
+        // const response = await Table.findOne({tableNo:table.tableNo})
 
-        await table.save()
-        return res.status(200).send()
+        // if(response) {
+        //     return res.status(400).send('Table already Occupied!')
+        // }
+
+        // await table.save()
+        // return res.status(200).send()
     } catch (error) {
 
     }
+})
+
+router.get('/api/table/tables',async(req,res) => {
+   try {
+        const tableData = await Table.find({})
+        return res.status(200).send({tableData})
+   } catch (error) {
+        return res.status(400).send()
+   } 
 })
