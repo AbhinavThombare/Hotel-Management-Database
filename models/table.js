@@ -13,9 +13,17 @@ const tableSchema = new mongoose.Schema({
         quantity:{
             type:Number,
             required:true
+        },
+        unit_price:{
+            type:Number,
+            required:true
+        },
+        price:{
+            type:Number,
+            required:true
         }
     }],
-    totalPrice:{
+    Total_Price:{
         type:Number,
         required:true
     }
