@@ -1,9 +1,8 @@
 const express = require('express')
-const { restart } = require('nodemon')
 const router = express.Router()
 const Table = require('../models/table')
 const Dish = require('../models/dishes')
-const { json } = require('body-parser')
+const AllData = require('../models/AllDataTables')
 
 router.post('/api/table/addtable', async (req, res) => {
     try {
@@ -50,6 +49,28 @@ router.delete('/api/table/deleteTable/:tableId',async(req,res) => {
     const tableId = req.params.tableId;
     await Table.findByIdAndDelete({_id:tableId})
     return res.status(200).send()
+})
+
+router.post('/api/allDataTables/Tables',async(req,res) => {
+    const tableData = req.body.tableData;
+    tableData.Date = new Date(YYYY-mm-dd)
+    console.log(tableData)
+
+    const tableId = tableData._id
+    await Table.findByIdAndDelete({_id:tableId})
+
+    const newTableData =  new AllData(tableData)
+
+    await newTableData.save()
+    return res.status(200).send()
+
+})
+
+router.get('/api/alldata/totalAmount/:start_date/:end_date',async(req,res) => {
+    const start_date = req.params.start_date;
+    const end_date = req.params.end_date
+    const allData = await AllData.find({ Date:{$gte:start_date,$lte:end_date} })
+    return res.status(200).send(allData)
 })
 
 
