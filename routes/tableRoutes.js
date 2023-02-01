@@ -1,15 +1,17 @@
 const express = require('express')
 const router = express.Router()
+const date = require('date-and-time')
 const Table = require('../models/table')
 const Dish = require('../models/dishes')
 const AllData = require('../models/AllDataTables')
 
 router.post('/api/table/addtable', async (req, res) => {
     try {
-        const table = req.body.table
+        var table = req.body.table;
         const dish = await Dish.find({})
         const sum = []
 
+        // For calculating Unit Price with Quantity
         table.Dishes.forEach(i => {
             dish.forEach(j => {
                 if (j.Dish_Name === i.dish) {
@@ -25,6 +27,8 @@ router.post('/api/table/addtable', async (req, res) => {
         table.Total_Price = allsum;
         const data = await Table.findOneAndUpdate({ tableNo: table.tableNo }, { Dishes: table.Dishes, Total_Price: table.Total_Price }, { new: true })
 
+
+        // for new Entry
         if (!data) {
             const addtable = new Table(table)
             await addtable.save()
@@ -45,31 +49,31 @@ router.get('/api/table/tables', async (req, res) => {
     }
 })
 
-router.delete('/api/table/deleteTable/:tableId',async(req,res) => {
+router.delete('/api/table/deleteTable/:tableId', async (req, res) => {
     const tableId = req.params.tableId;
-    await Table.findByIdAndDelete({_id:tableId})
+    await Table.findByIdAndDelete({ _id: tableId })
     return res.status(200).send()
 })
 
-router.post('/api/allDataTables/Tables',async(req,res) => {
+router.post('/api/allDataTables/Tables', async (req, res) => {
     const tableData = req.body.tableData;
-    tableData.Date = new Date(YYYY-mm-dd)
-    console.log(tableData)
+    const now = new Date()
+    tableData.Date = date.format(now, 'YYYY-MM-DD')
 
     const tableId = tableData._id
-    await Table.findByIdAndDelete({_id:tableId})
+    await Table.findByIdAndDelete({ _id: tableId })
 
-    const newTableData =  new AllData(tableData)
+    const newTableData = new AllData(tableData)
 
     await newTableData.save()
     return res.status(200).send()
 
 })
 
-router.get('/api/alldata/totalAmount/:start_date/:end_date',async(req,res) => {
+router.get('/api/alldata/totalAmount/:start_date/:end_date', async (req, res) => {
     const start_date = req.params.start_date;
     const end_date = req.params.end_date
-    const allData = await AllData.find({ Date:{$gte:start_date,$lte:end_date} })
+    const allData = await AllData.find({ Date: { $gte: start_date, $lte: end_date } })
     return res.status(200).send(allData)
 })
 
